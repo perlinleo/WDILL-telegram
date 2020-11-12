@@ -1,0 +1,1 @@
+print("lib podkluchena ebat`")
