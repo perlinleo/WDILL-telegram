@@ -1,13 +1,12 @@
-import checkGenerator
-
-
-
+import mylib as ml
 import telebot
 import os
+
 from telebot import types
 token = '415385336:AAG_0ZQJAF0DMMHyqMlZfBjvuJKfNKpLJ8k'
 bot = telebot.TeleBot(token)
-path = './'
+#path = '/root/env/megasuperfacedetectionbot/'
+path = ""
 admin_id = [296762765, 232673077]
 @bot.message_handler(commands = ['start'])
 def start(message):
@@ -38,15 +37,23 @@ def text(message):
 
 @bot.message_handler(content_types = ['photo'])
 def send_photo(message):
-	file_info = bot.get_file(message.photo[0].file_id)
-	downloaded_file = bot.download_file(file_info.file_path)
-	bot.send_message(message.chat.id, "Отлично! Ваше фото на обработке!")
-	with open(f"{path}WDILL.jpg", 'wb') as file:
-		file.write(downloaded_file)
-		for i in checkGenerator.checkFace("WDILL.jpg", getFinalFace=True,outputEveryLine=True):
-				bot.send_message(message.chat.id, i)
-	with open(f"{path}mostLikely.jpg","rb") as mostLikely:
-		bot.send_photo(message.chat.id,mostLikely)
+    file_info = bot.get_file(message.photo[0].file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    bot.send_message(message.chat.id, "Отлично! Ваше фото на обработке!")
+    with open("WDILL.jpg", 'wb') as file:
+        try:
+            file.write(downloaded_file)
+            ml.splitIntoFaces.splitWDILL()
+            ml.resize.resizeWDILL()
+            #for i in checkGenerator.checkFace(getFinalFace=True,outputEveryLine=False):
+                #print(i)
+            for i in ml.checkGenerator.checkFace(getFinalFace=True,outputEveryLine=False):
+                bot.send_message(message.chat.id, i)
+                print(i)
+            with open(f"{path}mostLikely.jpg","rb") as mostLikely:
+                bot.send_photo(message.chat.id,mostLikely)
+        except:
+            bot.send_message(message.chat.id,"try another photo")
 
 @bot.callback_query_handler(func=lambda call: True)
 def callbacks(call):

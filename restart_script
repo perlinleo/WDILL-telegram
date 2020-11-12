@@ -1,0 +1,2 @@
+MAILTO=root
+* * * * * /root/env/bin/python3 /root/env/megasuperfacedetectionbot/telestart.py
